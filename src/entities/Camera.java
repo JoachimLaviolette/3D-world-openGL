@@ -1,57 +1,52 @@
 package entities;
 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.util.vector.Vector3f;
 
 public class Camera {
-	private Vector3f position = new Vector3f(100f, 70f, 595f);
-	private float pitch = 25f;
-	private float yaw;
-	private float roll;
+	private Vector3f position = new Vector3f(0f, 0f, 0f);
+	private float pitch = 20f;
+	private float yaw = 0f;
+	private float roll = 0f;
+	
+	private Player player;
+	private float distanceFromPlayer = 50f;
+	private float angleAroundPlayer = 0f;
+	
+	private static long windowID;
 	
 	private GLFWKeyCallback keyCallback;
 	
-	public Camera() {}
+	public Camera(Player player, long wID) {
+		this.player = player;
+		windowID = wID;
+	}
 	
-	public void move(long windowID) {
-		keyCallback = new GLFWKeyCallback() {
-			@Override
-			public void invoke(long window, int key, int scancode, int action, int mods) {
-				if (key == GLFW_KEY_ESCAPE) {
-					glfwSetWindowShouldClose(window, GL_TRUE);
-				}
-				
-				// Qwerty configuration downhere
-				if (key == GLFW_KEY_LEFT_SHIFT) {
-					position.y += 10f;
-				} 
-				
-				if (key == GLFW_KEY_LEFT_CONTROL) {
-					position.y -= 10f;
-				}
-				
-				if (key == GLFW_KEY_UP) {
-					pitch -= 0.9f;
-				}				
-				
-				if (key == GLFW_KEY_DOWN) {
-					pitch += 0.9f;
-				}
-				
-				if (key == GLFW_KEY_LEFT) {
-					yaw -= 0.9f;
-				}				
-				
-				if (key == GLFW_KEY_RIGHT) {
-					yaw += 0.9f;
-				}
-			}
-		};
+	public void move() {
+		this.computeCameraPosition();
+	}
+	
+	private float computeHorizontalDistanceFromPlayer() {
+		return (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
+	}
+	
+	private float computeVerticalDistanceFromPlayer() {
+		return (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
+	}
+	
+	private void computeCameraPosition() {
+		float h_Dist = computeHorizontalDistanceFromPlayer();
+		float v_Dist = computeVerticalDistanceFromPlayer();
+		float theta = player.getRotY() + angleAroundPlayer;
+		float offsetX = (float) (h_Dist * Math.sin(Math.toRadians(theta)));
+		float offsetZ = (float) (h_Dist * Math.cos(Math.toRadians(theta)));
 		
-		glfwSetKeyCallback(windowID, keyCallback); 
+		position.x = player.getPosition().x - offsetX;
+		position.y = player.getPosition().y + v_Dist;
+		position.z = player.getPosition().z - offsetZ;
+			
+		yaw = 180 - (player.getRotY() + angleAroundPlayer);
 	}
 	
 	public Vector3f getPosition() {
@@ -69,28 +64,30 @@ public class Camera {
 	public float getRoll() {
 		return roll;
 	}
-	
-	public void moveRight() {
-		position.x += 0.2f;
+
+	public void setPosition(Vector3f position) {
+		this.position = position;
+	}
+
+	public void setPitch(float pitch) {
+		this.pitch = pitch;
+	}
+
+	public float getDistanceFromPlayer() {
+		return distanceFromPlayer;
 	}
 	
-	public void moveLeft() {
-		position.x -= 0.2f;
+	public void setDistanceFromPlayer(float distanceFromPlayer) {
+		this.distanceFromPlayer = distanceFromPlayer;
+	}
+
+	public float getAngleAroundPlayer() {
+		return angleAroundPlayer;
 	}
 	
-	public void moveFront() {
-		position.z -= 0.2f;
+	public void setAngleAroundPlayer(float angleAroundPlayer) {
+		this.angleAroundPlayer = angleAroundPlayer;
 	}
 	
-	public void moveBack() {
-		position.z += 0.2f;
-	}
 	
-	public void moveUp() {
-		position.y += 0.2f;
-	}
-	
-	public void moveDown() {
-		position.y -= 0.2f;
-	}
 }

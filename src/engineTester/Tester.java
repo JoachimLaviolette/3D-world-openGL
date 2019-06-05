@@ -23,6 +23,7 @@ import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import entities.Player;
+import inputs.InputHandler;
 import models.RawModel;
 import models.TexturedModel;
 
@@ -30,7 +31,6 @@ public class Tester {
 	public static void main(String[] args) {
 		long windowID = DisplayManager.createDisplay();
 		Loader loader = new Loader();
-		Camera camera = new Camera();		
 		boolean useAmbiantLights = false;
 		MasterRenderer masterRenderer = new MasterRenderer(useAmbiantLights);
 		List<Entity> entities = new ArrayList<Entity>();
@@ -131,15 +131,22 @@ public class Tester {
 		
 		// Player entity
 		ModelTexture playerModelTexture = new ModelTexture(loader.loadTexture("white"), 1f, .3f);
-		RawModel playerModel = OBJLoader.loadOBJModel("player", loader);
+		RawModel playerModel = OBJLoader.loadOBJModel("bunny", loader);
 		TexturedModel playerTexturedModel = new TexturedModel(playerModel, playerModelTexture);
 		Player player = new Player(
 				playerTexturedModel,
-				new Vector3f(100f, 10f, 500f),
-				0,
-				0,
-				0,
-				1);
+				new Vector3f(100f, 0f, 0f),
+				0f,
+				0f,
+				0f,
+				1f,
+				windowID);
+		
+		// Camera entity
+		Camera camera = new Camera(player, windowID);	
+		
+		// Input handler
+		InputHandler inputHandler = new InputHandler(player, camera, windowID);
 		
 		// Terrains
 		Terrain terrain = new Terrain(
@@ -152,14 +159,11 @@ public class Tester {
 		while (glfwWindowShouldClose(windowID) != GL_TRUE) {
 			DisplayManager.updateDisplay();
 			
-			//camera.move(windowID);
-			player.move(windowID);
-			//camera.moveBack();
-			//camera.moveRight();
-			//camera.moveUp();
+			inputHandler.handleInputs();
+			//player.increaseRotation(0f, 0.3f, 0f);
+			
 			masterRenderer.processEntity(player);
 			masterRenderer.processTerrain(terrain);
-			//masterRenderer.processTerrain(terrain2);
 			
 			for(Entity e: entities){
 				//e.increaseRotation(0, 0.09f, 0f);

@@ -12,8 +12,8 @@ import org.lwjgl.glfw.*;
 
 public class DisplayManager {
 	private static final String W_TITLE = "3D World [OpenGL]";
-	private static final int W_WIDTH = 1920;
-	private static final int W_HEIGHT = 1080;
+	private static final int W_WIDTH = 640;
+	private static final int W_HEIGHT = 480;
 	private static final int FPS = 120;
 	private static long lastFrameTime;
 	private static float delta;
