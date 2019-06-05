@@ -22,6 +22,7 @@ import org.lwjgl.util.vector.Vector4f;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
+import entities.Player;
 import models.RawModel;
 import models.TexturedModel;
 
@@ -109,7 +110,7 @@ public class Tester {
 					);
 		}
 		
-		// Lights		
+		// Light entities		
 		Light light_0 = new Light(
 				new Vector4f(200f, 200f, 100f, 1f),
 				new Vector3f(1f, 1f, 1f),
@@ -128,6 +129,18 @@ public class Tester {
 		lights.add(light_0);
 		lights.add(light_1);
 		
+		// Player entity
+		ModelTexture playerModelTexture = new ModelTexture(loader.loadTexture("white"), 1f, .3f);
+		RawModel playerModel = OBJLoader.loadOBJModel("player", loader);
+		TexturedModel playerTexturedModel = new TexturedModel(playerModel, playerModelTexture);
+		Player player = new Player(
+				playerTexturedModel,
+				new Vector3f(100f, 10f, 500f),
+				0,
+				0,
+				0,
+				1);
+		
 		// Terrains
 		Terrain terrain = new Terrain(
 				0,
@@ -137,11 +150,14 @@ public class Tester {
 				blendMap);
 				
 		while (glfwWindowShouldClose(windowID) != GL_TRUE) {
-			camera.move(windowID);
-			camera.moveBack();
+			DisplayManager.updateDisplay();
+			
+			//camera.move(windowID);
+			player.move(windowID);
+			//camera.moveBack();
 			//camera.moveRight();
 			//camera.moveUp();
-			
+			masterRenderer.processEntity(player);
 			masterRenderer.processTerrain(terrain);
 			//masterRenderer.processTerrain(terrain2);
 			

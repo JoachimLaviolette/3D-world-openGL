@@ -67,7 +67,7 @@ public class OBJLoader {
 				}
 				
 				String[] currentLine = line.split(" ");
-				System.out.println(line);
+				//System.out.println(line);
 				String[] vertex1 = currentLine[1].split("/");
 				String[] vertex2 = currentLine[2].split("/");
 				String[] vertex3 = currentLine[3].split("/");

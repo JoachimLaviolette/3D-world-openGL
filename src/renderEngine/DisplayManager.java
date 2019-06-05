@@ -7,12 +7,16 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 import java.nio.ByteBuffer;
 import org.lwjgl.opengl.GLContext;
+import org.lwjgl.Sys;
 import org.lwjgl.glfw.*;
 
 public class DisplayManager {
-	private static final String W_TITLE = "3D Scene [OpenGL]";
+	private static final String W_TITLE = "3D World [OpenGL]";
 	private static final int W_WIDTH = 1920;
 	private static final int W_HEIGHT = 1080;
+	private static final int FPS = 120;
+	private static long lastFrameTime;
+	private static float delta;
 	
 	private static final float clearColorRed = 1f;
 	private static final float clearColorBlue = 0f;
@@ -63,16 +67,29 @@ public class DisplayManager {
 		// Where to display
 		glViewport(0, 0, W_WIDTH, W_HEIGHT);
 		
+		// Update last frame time
+		lastFrameTime = getCurrentTime();
+		
 		return windowID;
 	}
 	
 	public static void updateDisplay() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glfwSwapBuffers(windowID);
+		long currentFrameTime = getCurrentTime();
+		delta = (currentFrameTime - lastFrameTime) / 1000f; // in s
+		lastFrameTime = currentFrameTime;
+	}
+	
+	public static float getFrameTimeSeconds() {
+		return delta;
 	}
 	
 	public static void closeDisplay() {
 		glfwDestroyWindow(windowID);
 		glfwTerminate();
+	}
+	
+	private static long getCurrentTime() {
+		return (long) (glfwGetTime() * 1000f); // in ms
 	}
 }
