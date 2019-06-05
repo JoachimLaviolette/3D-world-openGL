@@ -6,6 +6,8 @@ import renderEngine.MasterRenderer;
 import renderEngine.OBJLoader;
 import terrains.Terrain;
 import textures.ModelTexture;
+import textures.TerrainTexture;
+import textures.TerrainTexturePackage;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -32,6 +34,19 @@ public class Tester {
 		MasterRenderer masterRenderer = new MasterRenderer(useAmbiantLights);
 		List<Entity> entities = new ArrayList<Entity>();
 		Random random = new Random();
+		
+		// Terrain texture data
+		TerrainTexture terrainTexture = new TerrainTexture(loader.loadTexture("grass"));
+		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
+		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("mud"));
+		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
+		
+		TerrainTexturePackage terrainTexturePackage = new TerrainTexturePackage(
+				terrainTexture,
+				rTexture,
+				gTexture,
+				bTexture);
+		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
 		
 		// Tree entities
 		ModelTexture treeModelTexture = new ModelTexture(loader.loadTexture("tree"), 1f, 0f);
@@ -118,12 +133,8 @@ public class Tester {
 				0,
 				0,
 				loader,
-				new ModelTexture(loader.loadTexture("grassTexture")));
-		Terrain terrain2 = new Terrain(
-				1,
-				0,
-				loader,
-				new ModelTexture(loader.loadTexture("grassTexture")));
+				terrainTexturePackage,
+				blendMap);
 				
 		while (glfwWindowShouldClose(windowID) != GL_TRUE) {
 			camera.move(windowID);
@@ -132,7 +143,7 @@ public class Tester {
 			//camera.moveUp();
 			
 			masterRenderer.processTerrain(terrain);
-			masterRenderer.processTerrain(terrain2);
+			//masterRenderer.processTerrain(terrain2);
 			
 			for(Entity e: entities){
 				//e.increaseRotation(0, 0.09f, 0f);
