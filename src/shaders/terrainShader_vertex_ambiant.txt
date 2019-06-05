@@ -1,0 +1,37 @@
+#version 430 core
+
+struct Light {
+	vec4 position;
+	vec3 colour;
+	vec3 La;
+	vec3 Ld;
+	vec3 Ls;
+};
+
+in vec3 position;
+in vec2 textureCoordinates; // st
+in vec3 normal;
+
+out vec2 pass_textureCoordinates;
+out vec3 n;     	// surfaceNormal
+out vec3 v;			// toCameraVector
+out vec3 s[2]; 		// toLightsVectors
+
+uniform mat4 transformationMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
+uniform Light lights[2];
+
+void main(void) {
+	vec4 worldPosition = transformationMatrix * vec4(position, 1.0); 
+	gl_Position = projectionMatrix * viewMatrix * worldPosition;
+	pass_textureCoordinates = textureCoordinates * 40.0;
+	
+	n = (transformationMatrix * vec4(normal, 0.0)).xyz;
+	v = (inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
+	
+	for (int i = 0; i < lights.length(); i++) {		
+		// Vector FROM the vertex position TO the light position
+		s[i] = lights[i].position.xyz - worldPosition.xyz;
+	}
+} 

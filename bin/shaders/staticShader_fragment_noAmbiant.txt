@@ -1,0 +1,59 @@
+#version 430 core
+
+struct Light {
+	vec4 position;
+	vec3 colour;
+	vec3 La;
+	vec3 Ld;
+	vec3 Ls;
+};
+
+in vec2 pass_textureCoordinates; // st
+in vec3 n;
+in vec3 v;
+in vec3 s[2];
+in float visibility;
+
+out vec4 out_colour;
+
+uniform sampler2D modelTexture;
+uniform Light lights[2];
+uniform float shineDamper;
+uniform float reflectivity;
+uniform vec3 skyColour;
+
+void main(void) {
+	vec3 totalDiffuse = vec3(0.0);
+	vec3 totalSpecular = vec3(0.0);
+
+	vec3 unitN = normalize(n);
+	vec3 unitV = normalize(v);
+	
+	for (int i = 0; i < lights.length(); i++) {
+	    vec3 unitS = normalize(s[i]);
+	    
+	    // Calculate the dot product of the vector to the light source and the surface normal
+		float sDotN = dot(unitS, unitN);
+		float brightness = max(0.2, sDotN);
+
+	    // Calculate the reflection vector between light and surface
+		vec3 lightDirection = -unitS;
+	    vec3 r = reflect(lightDirection, unitN);
+	
+	    // If the surface is facing the light source
+	    if (sDotN > 0.0) {	
+		    // Calculate diffuse contribution
+		    totalDiffuse += lights[i].colour * brightness;
+		    
+	        // Calculate the specular contribution
+	        float specularFactor = dot(r, unitV);
+		    specularFactor = max(0.0, specularFactor);
+		    float dampedFactor = pow(specularFactor, shineDamper);
+	        totalSpecular += lights[i].colour * reflectivity * dampedFactor;
+	    }
+	}
+	
+    // Add the diffuse and specular contributions to our output fragment colour
+	out_colour =  vec4(totalDiffuse, 1.0) * texture(modelTexture,pass_textureCoordinates) + vec4(totalSpecular, 1.0);
+	out_colour = mix(vec4(skyColour, 1.0), out_colour, visibility);
+}
