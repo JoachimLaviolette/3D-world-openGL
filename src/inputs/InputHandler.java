@@ -1,17 +1,8 @@
 package inputs;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
-
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
 import entities.Camera;
@@ -23,7 +14,7 @@ public class InputHandler {
 	private Camera camera;
 	
 	private GLFWKeyCallback keyCallback;
-	
+		
 	public InputHandler(Player player, Camera camera, long wID) {
 		this.player = player;
 		this.camera = camera;
@@ -40,9 +31,13 @@ public class InputHandler {
 		keyCallback = new GLFWKeyCallback() {
 			@Override
 			public void invoke(long window, int key, int scancode, int action, int mods) {				
+				if (key == GLFW_KEY_ESCAPE) {
+					glfwSetWindowShouldClose(window, GL_TRUE);
+				}
+				
 				/* CAMERA INPUTS */
 				// zoom in
-				if (key == 266) {
+				else if (key == 266) {
 					camera.setDistanceFromPlayer(camera.getDistanceFromPlayer() + 2f); 
 				} 
 				// zoom out

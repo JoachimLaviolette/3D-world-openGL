@@ -11,7 +11,7 @@ public class Camera {
 	private float roll = 0f;
 	
 	private Player player;
-	private float distanceFromPlayer = 50f;
+	private float distanceFromPlayer = 100f;
 	private float angleAroundPlayer = 0f;
 	
 	private static long windowID;

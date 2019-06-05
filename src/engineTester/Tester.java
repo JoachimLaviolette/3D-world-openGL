@@ -27,13 +27,34 @@ import inputs.InputHandler;
 import models.RawModel;
 import models.TexturedModel;
 
-public class Tester {
-	public static void main(String[] args) {
-		long windowID = DisplayManager.createDisplay();
-		Loader loader = new Loader();
+public class Tester implements Runnable {
+	private Thread thread;
+	boolean running = false;
+	
+	private Loader loader;
+	private MasterRenderer masterRenderer;
+	
+	private Player player;
+	private Camera camera;
+	private List<Light> lights = new ArrayList<Light>();
+	private List<Entity> entities = new ArrayList<Entity>();
+	private Terrain terrain;
+	private InputHandler inputHandler;
+	
+	private long windowID;
+	
+	public void start() {
+		running = true;
+		thread = new Thread(this, "Scene");
+		thread.start();
+	}
+	
+	private void init() {
+		windowID = DisplayManager.createDisplay();
+		loader = new Loader();
 		boolean useAmbiantLights = false;
-		MasterRenderer masterRenderer = new MasterRenderer(useAmbiantLights);
-		List<Entity> entities = new ArrayList<Entity>();
+		masterRenderer = new MasterRenderer(useAmbiantLights);
+		entities = new ArrayList<Entity>();
 		Random random = new Random();
 		
 		// Terrain texture data
@@ -125,7 +146,7 @@ public class Tester {
 				new Vector3f(0.0f, 0.0f, 0.9f),
 				new Vector3f(1.0f, 1.0f, 1.0f));
 		
-		List<Light> lights = new ArrayList<Light>();
+		lights = new ArrayList<Light>();
 		lights.add(light_0);
 		lights.add(light_1);
 		
@@ -133,7 +154,7 @@ public class Tester {
 		ModelTexture playerModelTexture = new ModelTexture(loader.loadTexture("white"), 1f, .3f);
 		RawModel playerModel = OBJLoader.loadOBJModel("bunny", loader);
 		TexturedModel playerTexturedModel = new TexturedModel(playerModel, playerModelTexture);
-		Player player = new Player(
+		player = new Player(
 				playerTexturedModel,
 				new Vector3f(100f, 0f, 0f),
 				0f,
@@ -143,44 +164,57 @@ public class Tester {
 				windowID);
 		
 		// Camera entity
-		Camera camera = new Camera(player, windowID);	
+		camera = new Camera(player, windowID);	
 		
 		// Input handler
-		InputHandler inputHandler = new InputHandler(player, camera, windowID);
+		inputHandler = new InputHandler(player, camera, windowID);
 		
 		// Terrains
-		Terrain terrain = new Terrain(
+		terrain = new Terrain(
 				0,
 				0,
 				loader,
 				terrainTexturePackage,
 				blendMap);
-				
-		while (glfwWindowShouldClose(windowID) != GL_TRUE) {
+	}
+	
+	private void loop() {
+		while (running) {	
+			glfwWaitEvents();
 			DisplayManager.updateDisplay();
-			
-			inputHandler.handleInputs();
-			//player.increaseRotation(0f, 0.3f, 0f);
-			
+			inputHandler.handleInputs();	
+		
 			masterRenderer.processEntity(player);
 			masterRenderer.processTerrain(terrain);
 			
-			for(Entity e: entities){
-				//e.increaseRotation(0, 0.09f, 0f);
+			for(Entity e: entities) {
 				masterRenderer.processEntity(e);
 			}
 			
 			masterRenderer.render(lights, camera);
 			
 			// Swap display buffers
-			glfwSwapBuffers(windowID);			
-
-			// Poll for window events.
-			glfwPollEvents();
+			glfwSwapBuffers(windowID);
+			
+			if (glfwWindowShouldClose(windowID) == GL_TRUE)
+				running = false;
 		}
-		
+	}
+	
+	private void close() {
 		masterRenderer.cleanUp();
 		loader.cleanUp();
-		DisplayManager.closeDisplay();		
+		DisplayManager.closeDisplay();	
+	}
+
+	@Override
+	public void run() {
+		init();
+		loop();
+		close();				
+	}
+	
+	public static void main(String[] args) {
+		(new Tester()).start();
 	}
 }

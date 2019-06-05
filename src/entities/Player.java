@@ -18,9 +18,9 @@ import models.TexturedModel;
 import renderEngine.DisplayManager;
 
 public class Player extends Entity {
-	private static final float WALK_SPEED = 20f;
-	private static final float TURN_SPEED = 3f;
-	private static final float GRAVITY = -5f;
+	private static final float WALK_SPEED = 30f;
+	private static final float TURN_SPEED = 30f;
+	private static final float GRAVITY = -50f;
 	private static final float JUMP_POWER = 30f;
 	
 	private static final float TERRAIN_HEIGHT = 0;
@@ -40,14 +40,16 @@ public class Player extends Entity {
 	}
 	
 	public void move() {
-		super.increaseRotation(0f, mTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0f);
-		float distance = mWalkSpeed * DisplayManager.getFrameTimeSeconds();
+		float frameTime = DisplayManager.getFrameTimeSeconds();
+		super.increaseRotation(0f, mTurnSpeed * frameTime, 0f);
+		
+		float distance = mWalkSpeed * frameTime;
 		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotY())));
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
 		super.increasePosition(dx, 0, dz);
 		
-		mUpwardsSpeed += GRAVITY * DisplayManager.getFrameTimeSeconds();
-		super.increasePosition(0, mUpwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
+		mUpwardsSpeed += GRAVITY * frameTime;
+		super.increasePosition(0, mUpwardsSpeed * frameTime, 0);
 		
 		if (super.getPosition().y < TERRAIN_HEIGHT) {
 			mUpwardsSpeed = 0f;
