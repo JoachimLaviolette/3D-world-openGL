@@ -89,7 +89,12 @@ public class OBJLoader {
 							line = reader.readLine();
 						}
 						
-						break; // we break the loop because from there if the file is well formatted, only face lines should remain 
+						// we break the loop !
+						// from there, if the file is correctly made
+						// we should only have face lines remaining
+						// otherwise, the file should be reviewed
+						// examples of not working .obj files: wood.obj, wood1.obj
+						break;  
 					}
 				}
 			}		
