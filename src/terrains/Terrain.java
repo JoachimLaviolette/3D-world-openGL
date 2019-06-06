@@ -7,7 +7,7 @@ import textures.TerrainTexture;
 import textures.TerrainTexturePackage;
 
 public class Terrain {
-	private static final int SIZE = 800;
+	private static final int SIZE = 1200;
 	private static final int VERTEX_COUNT = 128;
 	
 	private float x;
@@ -28,7 +28,7 @@ public class Terrain {
 		int count = VERTEX_COUNT * VERTEX_COUNT;
 		float[] vertices = new float[count * 3];
 		float[] normals = new float[count * 3];
-		float[] textureCoords = new float[count * 2];
+		float[] textures = new float[count * 2];
 		int[] indices = new int[6 * (VERTEX_COUNT - 1) * (VERTEX_COUNT - 1)];
 		int vertexPointer = 0;
 		
@@ -40,8 +40,8 @@ public class Terrain {
 				normals[vertexPointer * 3] = 0;
 				normals[vertexPointer * 3 + 1] = 1;
 				normals[vertexPointer * 3 + 2] = 0;
-				textureCoords[vertexPointer * 2] = (float)j/((float)VERTEX_COUNT - 1);
-				textureCoords[vertexPointer * 2 + 1] = (float)i/((float)VERTEX_COUNT - 1);
+				textures[vertexPointer * 2] = (float)j/((float)VERTEX_COUNT - 1);
+				textures[vertexPointer * 2 + 1] = (float)i/((float)VERTEX_COUNT - 1);
 				vertexPointer++;
 			}
 		}
@@ -63,7 +63,7 @@ public class Terrain {
 			}
 		}
 		
-		return loader.loadToVAO(vertices, textureCoords, normals, indices);
+		return loader.loadToVAO(vertices, textures, normals, indices);
 	}
 
 	public float getX() {

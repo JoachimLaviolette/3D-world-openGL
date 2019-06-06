@@ -75,14 +75,14 @@ public class Tester implements Runnable {
 		RawModel treeModel = OBJLoader.loadOBJModel("tree", loader);
 		TexturedModel treeTexturedModel = new TexturedModel(treeModel, treeModelTexture);
 		
-		for(int i = 0; i < 100; i++) {
+		for(int i = 0; i < 10; i++) {
 			entities.add(
 					new Entity(
 							treeTexturedModel,
 							new Vector3f(
-									Math.abs(random.nextFloat() * 800 - 400),
+									Math.abs(random.nextFloat() * 1200),
 									0f,
-									random.nextFloat() * 800),
+									random.nextFloat() * 1200),
 							0,
 							0,
 							0,
@@ -100,9 +100,9 @@ public class Tester implements Runnable {
 					new Entity(
 							weedTexturedModel,
 							new Vector3f(
-									Math.abs(random.nextFloat() * 800 - 400),
+									Math.abs(random.nextFloat() * 1200),
 									0f,
-									random.nextFloat() * 800),
+									random.nextFloat() * 1200),
 							0,
 							0,
 							0,
@@ -111,7 +111,7 @@ public class Tester implements Runnable {
 		}
 		
 		// Panel entities
-		ModelTexture panelModelTexture = new ModelTexture(loader.loadTexture("image"), 1f, .3f);
+		ModelTexture panelModelTexture = new ModelTexture(loader.loadTexture("poster"), 1f, .3f);
 		RawModel panelModel = OBJLoader.loadOBJModel("exampleObj", loader);
 		TexturedModel panelTexturedModel = new TexturedModel(panelModel, panelModelTexture);
 		
@@ -120,8 +120,7 @@ public class Tester implements Runnable {
 					new Entity(
 							panelTexturedModel,
 							new Vector3f(
-									Math.abs(random.nextFloat() * 800 - 400),
-									//0,
+									Math.abs(random.nextFloat() * 1200),
 									0f,
 									random.nextFloat() * 800),
 							0,
