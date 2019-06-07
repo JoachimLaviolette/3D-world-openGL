@@ -36,7 +36,7 @@ void main(void) {
 	    
 	    // Calculate the dot product of the vector to the light source and the surface normal
 		float sDotN = dot(unitS, unitN);
-		float brightness = max(0.2, sDotN);
+		float brightness = max(0.0, sDotN);
 		float level = floor(brightness * levels);
 		brightness = level / levels;
 		
@@ -61,5 +61,5 @@ void main(void) {
 	
     // Add the diffuse and specular contributions to our output fragment colour
 	out_colour =  vec4(totalDiffuse, 1.0) * texture(modelTexture,pass_textureCoordinates) + vec4(totalSpecular, 1.0);
-	out_colour = 0;//mix(vec4(skyColour, 1.0), out_colour, visibility);
+	out_colour = mix(vec4(skyColour, 1.0), out_colour, visibility);
 }

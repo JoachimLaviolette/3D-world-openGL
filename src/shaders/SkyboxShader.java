@@ -22,6 +22,11 @@ public class SkyboxShader extends ShaderProgram {
  
     public void loadViewMatrix(Camera camera){
         Matrix4f matrix = Maths.createViewMatrix(camera);
+        // we want the camera to always stays at the center of the skybox
+        // instead of creating a transformation matrix for the skybox and
+        // setting it to the camera trasnformation
+        // we modify the view matrix translation components (defined in the last column)
+        // to apply the rotation of the skybox on the view matrix
         matrix.m30 = 0;
         matrix.m31 = 0;
         matrix.m32 = 0;

@@ -12,8 +12,8 @@ import toolbox.Maths;
 
 public class StaticShader extends ShaderProgram {
 	private static final int MAX_LIGHTS = 2;
-	private static String VERTEX_FILE = "src/shaders/staticShader_vertex_noAmbient.txt";
-	private static String FRAGMENT_FILE = "src/shaders/staticShader_fragment_noAmbient.txt";
+	private static String VERTEX_FILE = "src/shaders/toonShader_vertex_noAmbient.txt";
+	private static String FRAGMENT_FILE = "src/shaders/toonShader_fragment_noAmbient.txt";
 
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;

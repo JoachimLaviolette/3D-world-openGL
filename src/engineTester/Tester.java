@@ -139,7 +139,7 @@ public class Tester implements Runnable {
 		lights.add(light_1);
 		
 		// Player entity
-		ModelTexture playerModelTexture = new ModelTexture(loader.loadTexture("white"), 1f, .3f);
+		ModelTexture playerModelTexture = new ModelTexture(loader.loadTexture("white"), 1f, 1f);
 		RawModel playerModel = OBJLoader.loadOBJModel("player", loader);
 		TexturedModel playerTexturedModel = new TexturedModel(playerModel, playerModelTexture);
 		player = new Player(
