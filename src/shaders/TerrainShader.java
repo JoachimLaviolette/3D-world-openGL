@@ -12,8 +12,8 @@ import entities.Light;
 
 public class TerrainShader extends ShaderProgram {
 	private static final int MAX_LIGHTS = 2;
-	private static String VERTEX_FILE = "src/shaders/terrainShader_vertex_noAmbiant.txt";
-	private static String FRAGMENT_FILE = "src/shaders/terrainShader_fragment_noAmbiant.txt";
+	private static String VERTEX_FILE = "src/shaders/terrainShader_vertex_noAmbient.txt";
+	private static String FRAGMENT_FILE = "src/shaders/terrainShader_fragment_noAmbient.txt";
 	
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
@@ -32,9 +32,9 @@ public class TerrainShader extends ShaderProgram {
 	private int location_bTexture;
 	private int location_blendMap;
 
-	public TerrainShader(boolean useAmbiantLights) {
+	public TerrainShader(boolean useAmbientLights) {
 		super();
-		setupShaderFiles(useAmbiantLights);		
+		setupShaderFiles(useAmbientLights);		
 		super.setupShaderFiles(VERTEX_FILE, FRAGMENT_FILE);
 	}
 
@@ -69,10 +69,10 @@ public class TerrainShader extends ShaderProgram {
 		super.loadInt(location_blendMap, 4);
 	}
 	
-	private void setupShaderFiles(boolean useAmbiantLights) {
-		if (useAmbiantLights) {
-			VERTEX_FILE = "src/shaders/terrainShader_vertex_ambiant.txt";
-			FRAGMENT_FILE = "src/shaders/terrainShader_fragment_ambiant.txt";
+	private void setupShaderFiles(boolean useAmbientLights) {
+		if (useAmbientLights) {
+			VERTEX_FILE = "src/shaders/terrainShader_vertex_ambient.txt";
+			FRAGMENT_FILE = "src/shaders/terrainShader_fragment_ambient.txt";
 		}
 	}
 	

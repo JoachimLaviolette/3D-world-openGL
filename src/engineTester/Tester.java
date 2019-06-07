@@ -43,6 +43,9 @@ public class Tester implements Runnable {
 	
 	private long windowID;
 	
+	// Settings
+	boolean useAmbientLights = false;
+	
 	public void start() {
 		running = true;
 		thread = new Thread(this, "Scene");
@@ -52,23 +55,9 @@ public class Tester implements Runnable {
 	private void init() {
 		windowID = DisplayManager.createDisplay();
 		loader = new Loader();
-		boolean useAmbiantLights = false;
-		masterRenderer = new MasterRenderer(useAmbiantLights);
+		masterRenderer = new MasterRenderer(loader, useAmbientLights);
 		entities = new ArrayList<Entity>();
 		Random random = new Random();
-		
-		// Terrain texture data
-		TerrainTexture terrainTexture = new TerrainTexture(loader.loadTexture("grass"));
-		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
-		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("mud"));
-		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
-		
-		TerrainTexturePackage terrainTexturePackage = new TerrainTexturePackage(
-				terrainTexture,
-				rTexture,
-				gTexture,
-				bTexture);
-		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
 		
 		// Tree entities
 		ModelTexture treeModelTexture = new ModelTexture(loader.loadTexture("tree"), 1f, 0f);
@@ -140,7 +129,7 @@ public class Tester implements Runnable {
 		
 		Light light_1 = new Light(
 				new Vector4f(100f, 100f, 4f, 1f),
-				new Vector3f(1f, .5f, 0f),
+				new Vector3f(.1f, .3f, .9f),
 				new Vector3f(0f, 0f, 0f),
 				new Vector3f(0.0f, 0.0f, 0.9f),
 				new Vector3f(1.0f, 1.0f, 1.0f));
@@ -151,7 +140,7 @@ public class Tester implements Runnable {
 		
 		// Player entity
 		ModelTexture playerModelTexture = new ModelTexture(loader.loadTexture("white"), 1f, .3f);
-		RawModel playerModel = OBJLoader.loadOBJModel("wood1", loader);
+		RawModel playerModel = OBJLoader.loadOBJModel("player", loader);
 		TexturedModel playerTexturedModel = new TexturedModel(playerModel, playerModelTexture);
 		player = new Player(
 				playerTexturedModel,
@@ -168,7 +157,20 @@ public class Tester implements Runnable {
 		// Input handler
 		inputHandler = new InputHandler(player, camera, windowID);
 		
-		// Terrains
+		// Terrain multi-texturing data
+		TerrainTexture terrainTexture = new TerrainTexture(loader.loadTexture("grassTexture"));
+		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
+		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("mud"));
+		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
+		
+		TerrainTexturePackage terrainTexturePackage = new TerrainTexturePackage(
+				terrainTexture,
+				rTexture,
+				gTexture,
+				bTexture);
+		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
+		
+		// Terrain
 		terrain = new Terrain(
 				0,
 				0,

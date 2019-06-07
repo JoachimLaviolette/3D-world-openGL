@@ -1,6 +1,9 @@
 package renderEngine;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
 
 import java.util.List;
 import java.util.Map;
@@ -8,10 +11,6 @@ import java.util.Map;
 import models.RawModel;
 import models.TexturedModel;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
 import shaders.StaticShader;
@@ -37,7 +36,7 @@ public class EntityRenderer {
 			
 			for (Entity entity: batch) {
 				prepareInstance(entity);
-				GL11.glDrawElements(GL_TRIANGLES, model.getRawModel().getVertexCount(),
+				glDrawElements(GL_TRIANGLES, model.getRawModel().getVertexCount(),
 						GL_UNSIGNED_INT, 0);
 			}
 			
@@ -47,22 +46,22 @@ public class EntityRenderer {
 
 	private void prepareTexturedModel(TexturedModel model) {
 		RawModel rawModel = model.getRawModel();
-		GL30.glBindVertexArray(rawModel.getVaoID());
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
-		GL20.glEnableVertexAttribArray(2);
+		glBindVertexArray(rawModel.getVaoID());
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
 		
 		ModelTexture texture = model.getModelTexture();
 		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getModelTexture().getTextureID());
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, model.getModelTexture().getTextureID());
 	}
 
 	private void unbindTexturedModel() {
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
-		GL20.glDisableVertexAttribArray(2);
-		GL30.glBindVertexArray(0);
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(2);
+		glBindVertexArray(0);
 	}
 
 	private void prepareInstance(Entity entity) {

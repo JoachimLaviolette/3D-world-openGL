@@ -4,6 +4,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWMouseButtonCallback;
 
 import entities.Camera;
 import entities.Player;
@@ -14,6 +15,7 @@ public class InputHandler {
 	private Camera camera;
 	
 	private GLFWKeyCallback keyCallback;
+	GLFWMouseButtonCallback mouseButtonDownCallback;
 		
 	public InputHandler(Player player, Camera camera, long wID) {
 		this.player = player;
@@ -27,7 +29,19 @@ public class InputHandler {
 		player.move();
 	}
 	
-	private void setupInputs() {
+	private void setupInputs() {		
+		mouseButtonDownCallback = new GLFWMouseButtonCallback() {
+			@Override
+			public void invoke(long arg0, int arg1, int arg2, int arg3) {
+				// DEBUG
+				System.out.println(arg0);
+				System.out.println(arg1);
+				System.out.println(arg2);
+				System.out.println(arg3);
+			}
+			
+		};
+		
 		keyCallback = new GLFWKeyCallback() {
 			@Override
 			public void invoke(long window, int key, int scancode, int action, int mods) {				
@@ -83,6 +97,7 @@ public class InputHandler {
 			}
 		};
 		
+		glfwSetMouseButtonCallback(windowID, mouseButtonDownCallback);
 		glfwSetKeyCallback(windowID, keyCallback);
 	}
 	

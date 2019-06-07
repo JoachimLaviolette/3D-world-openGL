@@ -1,6 +1,7 @@
 package renderEngine;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -8,17 +9,19 @@ import static org.lwjgl.opengl.GL30.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.*;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
+import de.matthiasmann.twl.utils.PNGDecoder;
 
 import models.RawModel;
+import textures.TextureData;
 
 public class Loader {
 	private List<Integer> vaos = new ArrayList<Integer>();
@@ -41,11 +44,26 @@ public class Loader {
 		return new RawModel(vaoID, indices.length);
 	}
 	
+	/**
+	 * Load data to VAO
+	 * Used for cube mapping
+	 * @param positions
+	 * @param dimensions
+	 * @return
+	 */
+	public RawModel loadToVAO(float[] positions, int dimensions) {
+		int vaoID = createVAO();
+		storeDataInAttributeList(0, dimensions, positions);
+		unbindVAO();
+		
+		return new RawModel(vaoID, positions.length / dimensions);
+	}
+	
 	public int loadTexture(String textureFile) {
 		Texture texture = null;
 		
 		try {
-			texture = TextureLoader.getTexture("PNG", new FileInputStream("res/" + textureFile + ".png"));
+			texture = TextureLoader.getTexture("PNG", new FileInputStream("res/texture/" + textureFile + ".png"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -60,6 +78,36 @@ public class Loader {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		
+		return textureID;
+	}
+	
+	public int loadCubeMap(String[] textureFilenames) {
+		int textureID = glGenTextures();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+		
+		for (int x = 0; x < textureFilenames.length; x++) {
+			TextureData textureData = decodeTextureFile("skybox/" + textureFilenames[x]);
+			glTexImage2D(
+					GL_TEXTURE_CUBE_MAP_POSITIVE_X + x,
+					0,
+					GL_RGBA,
+					textureData.getWidth(),
+					textureData.getHeight(),
+					0,
+					GL_RGBA, 
+					GL_UNSIGNED_BYTE,
+					textureData.getBb()
+					);
+		}
+		
+		textures.add(textureID);
+		
+		// Texture filtering method
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER,	GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER,	GL_LINEAR);
+		
 		
 		return textureID;
 	}
@@ -145,6 +193,34 @@ public class Loader {
 		buffer.flip();
 		
 		return buffer;
+	}
+	
+	/**
+	 * Decode a texture file
+	 * @param filename Name of the texture file to decode
+	 * @return
+	 */
+	private TextureData decodeTextureFile(String filename) {
+		int width = 0;
+		int height = 0;
+		ByteBuffer bb = null;
+		try {
+		    FileInputStream in = new FileInputStream("res/" + filename + ".png");
+		    PNGDecoder decoder = new PNGDecoder(in);
+		    width = decoder.getWidth();
+		    height = decoder.getHeight();
+		    bb = ByteBuffer.allocateDirect(4 * width * height);
+		    decoder.decode(bb, width * 4, PNGDecoder.Format.RGBA);
+		    bb.flip();
+		    in.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("Texture " + filename + " loading failed!");
+			System.exit(-1);
+		}
+		
+		return new TextureData(width, height, bb);
 	}
 	
 	/**

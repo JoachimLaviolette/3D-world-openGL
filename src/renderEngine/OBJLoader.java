@@ -22,7 +22,7 @@ public class OBJLoader {
 		float[] texturesArray = null;
 		int[] indicesArray = null;
 
-		try (BufferedReader reader = new BufferedReader(new FileReader("res/" + OBJFile + ".obj"))) {
+		try (BufferedReader reader = new BufferedReader(new FileReader("res/obj/" + OBJFile + ".obj"))) {
 			while(true) {
 				line = reader.readLine();
 				if (!line.isEmpty() && !line.startsWith("#")) {

@@ -1,0 +1,14 @@
+#version 430 core
+
+in vec3 position;
+out vec3 textureCoords; // we sample the cube map using 3D direction vector and not a 2D texture coords
+
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
+
+void main(void) {
+	// No need of using transformation matrix here because we never
+	// scale or move the skybox
+	gl_Position = projectionMatrix * viewMatrix * vec4(position, 1.0); 
+	textureCoords = position;
+}

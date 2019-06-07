@@ -12,8 +12,8 @@ import toolbox.Maths;
 
 public class StaticShader extends ShaderProgram {
 	private static final int MAX_LIGHTS = 2;
-	private static String VERTEX_FILE = "src/shaders/staticShader_vertex_noAmbiant.txt";
-	private static String FRAGMENT_FILE = "src/shaders/staticShader_fragment_noAmbiant.txt";
+	private static String VERTEX_FILE = "src/shaders/staticShader_vertex_noAmbient.txt";
+	private static String FRAGMENT_FILE = "src/shaders/staticShader_fragment_noAmbient.txt";
 
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
@@ -27,9 +27,9 @@ public class StaticShader extends ShaderProgram {
 	private int location_reflectivity;
 	private int location_skyColour;
 
-	public StaticShader(boolean useAmbiantLights) {
+	public StaticShader(boolean useAmbientLights) {
 		super();
-		setupShaderFiles(useAmbiantLights);		
+		setupShaderFiles(useAmbientLights);		
 		super.setupShaderFiles(VERTEX_FILE, FRAGMENT_FILE);
 	}
 
@@ -53,8 +53,8 @@ public class StaticShader extends ShaderProgram {
 	
 	private void setupShaderFiles(boolean useAmbiantLights) {
 		if (useAmbiantLights) {
-			VERTEX_FILE = "src/shaders/staticShader_vertex_ambiant.txt";
-			FRAGMENT_FILE = "src/shaders/staticShader_fragment_ambiant.txt";
+			VERTEX_FILE = "src/shaders/staticShader_vertex_ambient.txt";
+			FRAGMENT_FILE = "src/shaders/staticShader_fragment_ambient.txt";
 		}
 	}
 	

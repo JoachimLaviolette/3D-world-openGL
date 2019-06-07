@@ -22,9 +22,9 @@ import shaders.TerrainShader;
 import terrains.Terrain;
 
 public class MasterRenderer {
-	private static final float RED = .5f;
-	private static final float BLUE = .5f;
-	private static final float GREEN = .5f;
+	private static final float RED = .1f;
+	private static final float BLUE = .1f;
+	private static final float GREEN = .1f;
 	private static final float ALPHA = 1f;	
 	
 	private static final float FOV = 70;
@@ -35,6 +35,7 @@ public class MasterRenderer {
 	
 	private EntityRenderer entityRenderer;	
 	private TerrainRenderer terrainRenderer;
+	private SkyboxRenderer skyboxRenderer;
 
 	private StaticShader staticShader;
 	private TerrainShader terrainShader;
@@ -42,21 +43,20 @@ public class MasterRenderer {
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 
-	public MasterRenderer(boolean useAmbiantLights) {
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
+	public MasterRenderer(Loader loader, boolean useAmbiantLights) {
+		enableCulling();
 		this.staticShader = new StaticShader(useAmbiantLights);
 		this.terrainShader = new TerrainShader(useAmbiantLights);
 		createProjectionMatrix();
-		this.entityRenderer = new EntityRenderer(staticShader,projectionMatrix);
-		this.terrainRenderer = new TerrainRenderer(terrainShader,projectionMatrix);
+		this.entityRenderer = new EntityRenderer(staticShader, projectionMatrix);
+		this.terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+		this.skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 	}
 	
 	public void prepare() {
 		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(RED, BLUE, GREEN, ALPHA);
-		
 	}
 	
 	public void render(List<Light> lights, Camera camera) {
@@ -75,6 +75,8 @@ public class MasterRenderer {
 		terrainShader.loadViewMatrix(camera);
 		terrainRenderer.render(terrains);
 		terrainShader.stop();
+		
+		skyboxRenderer.render(camera);
 		
 		terrains.clear();
 		entities.clear();
@@ -115,6 +117,11 @@ public class MasterRenderer {
 		projectionMatrix.m23 = -1;
 		projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustrum_length);
 		projectionMatrix.m33 = 0;
+	}
+	
+	private void enableCulling() {
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
 	}
 	
 	public void cleanUp() {
